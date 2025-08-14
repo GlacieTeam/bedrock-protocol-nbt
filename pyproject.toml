@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bedrock-protocol-nbt"
+version = "1.0.0"
+authors = [{ name = "GlacieTeam" }]
+description = "Minecraft NBT Library"
+readme = "README.md"
+requires-python = ">=3"
+license = { text = "MPL-2.0" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+]
+dependencies = ["bedrock-protocol-binarystream >= 1.0.0"]
+
+[project.urls]
+homepage = "https://github.com/GlacieTeam/bedrock-protocol-nbt"
+
+[tool.setuptools]
+include-package-data = true
+packages = { find = {} }
+
+[tool.setuptools.package-data]
+"bedrock_protocol.nbt._internal" = ["*.dll", "*.so", "*.dylib"]
