@@ -26,6 +26,11 @@ nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
 print(nbt.to_snbt())
 ```
 
+# Used Projects
+| Project          | License      | Link                                         |
+| ---------------- | ------------ | -------------------------------------------- |
+| NBT              | MPL-2.0      | <https://github.com/GlacieTeam/NBT>          |
+
 ## License
 This project is licensed under the **Mozilla Public License 2.0 (MPL-2.0)**.  
 
