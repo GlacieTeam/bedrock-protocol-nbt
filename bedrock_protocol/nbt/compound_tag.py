@@ -357,7 +357,7 @@ class CompoundTag(Tag):
         """
         self.put(key, ListTag(value))
 
-    def get_list(self, key: Union[bytes, str]) -> List[Tag] | None:
+    def get_list(self, key: Union[bytes, str]) -> Optional[List[Tag]]:
         """Get a ListTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -377,7 +377,7 @@ class CompoundTag(Tag):
         """
         self.put(key, IntArrayTag(value))
 
-    def get_int_array(self, key: Union[bytes, str]) -> List[int] | None:
+    def get_int_array(self, key: Union[bytes, str]) -> Optional[List[int]]:
         """Get a IntArrayTag's value in this CompoundTag
         Args:
             key: the key of the tag
