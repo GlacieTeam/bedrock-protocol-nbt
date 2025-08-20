@@ -8,7 +8,17 @@
 from bedrock_protocol.nbt.tag import Tag
 from bedrock_protocol.nbt.snbt_format import SnbtFormat
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
-from typing import Optional, Union
+from bedrock_protocol.nbt.byte_tag import ByteTag
+from bedrock_protocol.nbt.short_tag import ShortTag
+from bedrock_protocol.nbt.int_tag import IntTag
+from bedrock_protocol.nbt.int64_tag import Int64Tag
+from bedrock_protocol.nbt.float_tag import FloatTag
+from bedrock_protocol.nbt.double_tag import DoubleTag
+from bedrock_protocol.nbt.byte_array_tag import ByteArrayTag
+from bedrock_protocol.nbt.string_tag import StringTag
+from bedrock_protocol.nbt.list_tag import ListTag
+from bedrock_protocol.nbt.int_array_tag import IntArrayTag
+from typing import List, Optional, Union
 import ctypes
 
 
@@ -40,7 +50,7 @@ class CompoundTag(Tag):
         Returns:
             True if succeed
         """
-        return self.set(key, value)
+        return self.put(key, value)
 
     def __delitem__(self, key: Union[bytes, str]) -> bool:
         """Delete value from the CompoundTag
@@ -51,12 +61,33 @@ class CompoundTag(Tag):
         """
         return self.pop(key)
 
+    def __contains__(self, key: Union[bytes, str]) -> bool:
+        """check the CompoundTag contains a key-value
+        Returns:
+            True if contains
+        """
+        return self.contains(key)
+
     def size(self) -> int:
         """Get size of the CompoundTag
         Returns:
             size
         """
         return self._lib_handle.nbt_compound_tag_size(self._tag_handle)
+
+    def contains(self, key: Union[bytes, str]) -> bool:
+        """check the CompoundTag contains a key-value
+        Returns:
+            True if contains
+        """
+        index = key
+        if isinstance(index, str):
+            index = key.encode("utf-8")
+        length = len(index)
+        char_ptr = ctypes.c_char_p(index)
+        return self._lib_handle.nbt_compound_tag_has_tag(
+            self._tag_handle, char_ptr, length
+        )
 
     def pop(self, key: Union[bytes, str]) -> bool:
         """Delete value from the CompoundTag
@@ -74,7 +105,7 @@ class CompoundTag(Tag):
             self._tag_handle, char_ptr, length
         )
 
-    def set(self, key: Union[bytes, str], value: Tag) -> bool:
+    def put(self, key: Union[bytes, str], value: Tag) -> bool:
         """Set a tag in the CompoundTag
         Args:
             key: the key of the tag to pop (default the end)
@@ -116,6 +147,247 @@ class CompoundTag(Tag):
     def clear(self) -> None:
         """Clear all tags in the CompoundTag"""
         self._lib_handle.nbt_compound_tag_clear(self._tag_handle)
+
+    def put_byte(self, key: Union[bytes, str], value: int) -> None:
+        """Put a ByteTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the byte value
+        """
+        self.put(key, ByteTag(value))
+
+    def get_byte(self, key: Union[bytes, str]) -> Optional[int]:
+        """Get a ByteTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the byte value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_short(self, key: Union[bytes, str], value: int) -> None:
+        """Put a ShortTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the short value
+        """
+        self.put(key, ShortTag(value))
+
+    def get_short(self, key: Union[bytes, str]) -> Optional[int]:
+        """Get a ShortTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the short value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_int(self, key: Union[bytes, str], value: int) -> None:
+        """Put a IntTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the int value
+        """
+        self.put(key, IntTag(value))
+
+    def get_int(self, key: Union[bytes, str]) -> Optional[int]:
+        """Get a IntTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the int value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_int64(self, key: Union[bytes, str], value: int) -> None:
+        """Put a Int64Tag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the int64 value
+        """
+        self.put(key, Int64Tag(value))
+
+    def get_int64(self, key: Union[bytes, str]) -> Optional[int]:
+        """Get a Int64Tag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the int64 value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_float(self, key: Union[bytes, str], value: float) -> None:
+        """Put a FloatTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the float value
+        """
+        self.put(key, FloatTag(value))
+
+    def get_float(self, key: Union[bytes, str]) -> Optional[float]:
+        """Get a FloatTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the float value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_double(self, key: Union[bytes, str], value: float) -> None:
+        """Put a DoubleTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the double value
+        """
+        self.put(key, DoubleTag(value))
+
+    def get_double(self, key: Union[bytes, str]) -> Optional[float]:
+        """Get a DoubleTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the double value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_byte_array(
+        self, key: Union[bytes, str], value: Union[bytearray, bytes]
+    ) -> None:
+        """Put a ByteArrayTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the byte array value
+        """
+        self.put(key, ByteArrayTag(value))
+
+    def get_byte_array(self, key: Union[bytes, str]) -> Optional[bytes]:
+        """Get a ByteArrayTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the byte array value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_string(self, key: Union[bytes, str], value: str) -> None:
+        """Put a StringTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the string value
+        """
+        self.put(key, StringTag(value))
+
+    def get_string(self, key: Union[bytes, str]) -> Optional[str]:
+        """Get a StringTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the string value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get_str()
+        return None
+
+    def put_binary_string(
+        self, key: Union[bytes, str], value: Union[bytearray, bytes]
+    ) -> None:
+        """Put a StringTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the binary value
+        """
+        self.put(key, StringTag(value))
+
+    def get_binary_string(self, key: Union[bytes, str]) -> Optional[bytes]:
+        """Get a StringTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the binary value
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get()
+        return None
+
+    def put_compound(self, key: Union[bytes, str], value: "CompoundTag") -> None:
+        """Put a CompoundTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the CompoundTag
+        """
+        self.put(key, value)
+
+    def get_compound(self, key: Union[bytes, str]) -> Optional["CompoundTag"]:
+        """Get a CompoundTag in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the CompoundTag
+        """
+        return self.get(key)
+
+    def put_list(self, key: Union[bytes, str], value: List[Tag]) -> None:
+        """Put a ListTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the tag list
+        """
+        self.put(key, ListTag(value))
+
+    def get_list(self, key: Union[bytes, str]) -> List[Tag] | None:
+        """Get a ListTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the tag list
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get_list()
+        return None
+
+    def put_int_array(self, key: Union[bytes, str], value: List[int]) -> None:
+        """Put a IntArrayTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the int array
+        """
+        self.put(key, IntArrayTag(value))
+
+    def get_int_array(self, key: Union[bytes, str]) -> List[int] | None:
+        """Get a IntArrayTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the tag int array
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get_list()
+        return None
 
     def to_binary_nbt(self, little_endian: bool = True) -> bytes:
         """Encode the CompoundTag to binary NBT format

@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from bedrock_protocol.nbt.tag import Tag
-from typing import Optional
+from typing import List, Optional
 
 
 class ListTag(Tag):
@@ -15,7 +15,7 @@ class ListTag(Tag):
     A Tag contains a list of tag
     """
 
-    def __init__(self, tag_list: "list[Tag]" = []):
+    def __init__(self, tag_list: List[Tag] = []):
         super().__init__()
         self._tag_handle = self._lib_handle.nbt_list_tag_create()
         self.set_list(tag_list)
@@ -106,7 +106,7 @@ class ListTag(Tag):
         """Clear all tags in the ListTag"""
         self._lib_handle.nbt_list_tag_clear(self._tag_handle)
 
-    def get_list(self) -> "list[Tag]":
+    def get_list(self) -> List[Tag]:
         """Get all tags in the ListTag
         Returns:
             List of tag
@@ -119,7 +119,7 @@ class ListTag(Tag):
             index += 1
         return result
 
-    def set_list(self, tag_list: "list[Tag]") -> None:
+    def set_list(self, tag_list: List[Tag]) -> None:
         """Set all tags in the ListTag
         Args:
             tag_list: List of tag

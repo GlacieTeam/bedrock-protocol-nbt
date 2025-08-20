@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from bedrock_protocol.nbt.tag import Tag
-from typing import Optional
+from typing import List, Optional
 
 
 class IntArrayTag(Tag):
@@ -15,7 +15,7 @@ class IntArrayTag(Tag):
     A Tag contains a list of int
     """
 
-    def __init__(self, tag_list: list[int] = []):
+    def __init__(self, tag_list: List[int] = []):
         super().__init__()
         self._tag_handle = self._lib_handle.nbt_int_array_tag_create()
         self.set_list(tag_list)
@@ -100,7 +100,7 @@ class IntArrayTag(Tag):
         """Clear all tags in the IntArrayTag"""
         self._lib_handle.nbt_int_array_tag_clear(self._tag_handle)
 
-    def get_list(self) -> list[int]:
+    def get_list(self) -> List[int]:
         """Get all tags in the IntArrayTag
         Returns:
             List of tag
@@ -113,7 +113,7 @@ class IntArrayTag(Tag):
             index += 1
         return result
 
-    def set_list(self, int_list: list[int]) -> None:
+    def set_list(self, int_list: List[int]) -> None:
         """Set all tags in the IntArrayTag
         Args:
             tag_list: List of tag

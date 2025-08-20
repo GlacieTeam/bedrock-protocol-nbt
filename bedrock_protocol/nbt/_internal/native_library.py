@@ -177,8 +177,8 @@ class NativeLibrary:
             ctypes.c_char_p,
             ctypes.c_size_t,
         ]
-        cls._lib_handle.nbt_string_tag_get.restype = NbtIoBuffer
-        cls._lib_handle.nbt_string_tag_get.argtypes = [ctypes.c_void_p]
+        cls._lib_handle.nbt_string_tag_get_value.restype = NbtIoBuffer
+        cls._lib_handle.nbt_string_tag_get_value.argtypes = [ctypes.c_void_p]
         # ListTag
         cls._lib_handle.nbt_list_tag_create.restype = ctypes.c_void_p
         cls._lib_handle.nbt_list_tag_create.argtypes = []
@@ -221,6 +221,12 @@ class NativeLibrary:
         ]
         cls._lib_handle.nbt_compound_tag_get_tag.restype = ctypes.c_void_p
         cls._lib_handle.nbt_compound_tag_get_tag.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_char_p,
+            ctypes.c_size_t,
+        ]
+        cls._lib_handle.nbt_compound_tag_has_tag.restype = ctypes.c_bool
+        cls._lib_handle.nbt_compound_tag_has_tag.argtypes = [
             ctypes.c_void_p,
             ctypes.c_char_p,
             ctypes.c_size_t,

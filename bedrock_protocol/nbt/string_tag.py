@@ -75,6 +75,8 @@ class StringTag(Tag):
         """
         data = self.get()
         try:
-            return data.decode("utf-8")
+            if data is not None:
+                return data.decode("utf-8")
+            return ""
         except UnicodeDecodeError:
             return ""
