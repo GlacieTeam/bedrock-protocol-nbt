@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import os
+import platform
 import sys
 import ctypes
 import threading
@@ -32,11 +33,17 @@ class NativeLibrary:
         if cls._initialized or cls._initialization_error is not None:
             return
 
-        lib_dir = os.path.dirname(os.path.abspath(__file__))
+        arch = platform.machine().lower()
+        if arch == "amd64":
+            arch = "x86_64"
+        elif arch == "aarch64":
+            arch = "arm64"
+
+        lib_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), arch)
         platform_map = {
             "win32": "NBT.dll",
             "linux": "libNBT.so",
-            # "darwin": "libNBT.dylib", TODO: MacOS
+            "darwin": "libNBT.dylib",
         }
 
         if sys.platform not in platform_map:

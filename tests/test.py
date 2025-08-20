@@ -27,7 +27,11 @@ def test1():
 def test2():
     snbt = '{"byte_array_tag": [B;49b, 51b, 50b, 55b, 54b, 50b, 55b, 51b, 57b, 50b, 51b],"double_tag": 3.141593,"byte_tag": 114b}'
     nbt = CompoundTag.from_snbt(snbt)
-    print(nbt.to_json())
+    # print(nbt.to_json())
+    bnbt = nbt.to_binary_nbt()
+    print(bnbt.hex())
+    rnbt = CompoundTag.from_binary_nbt(bnbt)
+    print(rnbt.to_snbt())
 
 
 if __name__ == "__main__":
@@ -35,3 +39,4 @@ if __name__ == "__main__":
     test1()
     print("-" * 25, "Test2", "-" * 25)
     test2()
+    print("-" * 25, "END", "-" * 25)

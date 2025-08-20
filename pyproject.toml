@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bedrock-protocol-nbt"
-version = "1.0.0"
+version = "1.1.0"
 authors = [{ name = "GlacieTeam" }]
 description = "Minecraft NBT Library"
 readme = "README.md"
@@ -15,7 +15,7 @@ classifiers = [
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
     "Operating System :: OS Independent",
 ]
-dependencies = ["bedrock-protocol-binarystream >= 1.0.0"]
+dependencies = ["bedrock-protocol-binarystream >= 1.1.0"]
 
 [project.urls]
 homepage = "https://github.com/GlacieTeam/bedrock-protocol-nbt"
@@ -25,4 +25,5 @@ include-package-data = true
 packages = { find = {} }
 
 [tool.setuptools.package-data]
-"bedrock_protocol.nbt._internal" = ["*.dll", "*.so", "*.dylib"]
+"bedrock_protocol.nbt._internal.x86_64" = ["*.dll", "*.so", "*.dylib"]
+"bedrock_protocol.nbt._internal.arm64" = ["*.dll", "*.so", "*.dylib"]

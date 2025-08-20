@@ -19,6 +19,7 @@ class Tag:
 
     def __init__(self):
         self._lib_handle = get_library_handle()
+        self._tag_handle = None
 
     def __eq__(self, value):
         return self.equals(value)

@@ -183,12 +183,15 @@ class CompoundTag(Tag):
         length = len(content)
         char_ptr = ctypes.c_char_p(content)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
-        result = Tag()
-        result._tag_handle = get_library_handle().nbt_compound_from_binary_nbt(
+        handle = get_library_handle().nbt_compound_from_binary_nbt(
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length, little_endian
         )
-        result.__class__ = CompoundTag
-        return result
+        if handle is not None:
+            result = Tag()
+            result._tag_handle = handle
+            result.__class__ = CompoundTag
+            return result
+        return None
 
     @staticmethod
     def from_network_nbt(content: bytes) -> "CompoundTag":
@@ -199,12 +202,15 @@ class CompoundTag(Tag):
         length = len(content)
         char_ptr = ctypes.c_char_p(content)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
-        result = Tag()
-        result._tag_handle = get_library_handle().nbt_compound_from_network_nbt(
+        handle = get_library_handle().nbt_compound_from_network_nbt(
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length
         )
-        result.__class__ = CompoundTag
-        return result
+        if handle is not None:
+            result = Tag()
+            result._tag_handle = handle
+            result.__class__ = CompoundTag
+            return result
+        return None
 
     @staticmethod
     def from_snbt(content: str) -> "CompoundTag":
