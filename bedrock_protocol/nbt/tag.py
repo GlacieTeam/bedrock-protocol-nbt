@@ -18,6 +18,11 @@ class Tag:
     _lib_handle: ctypes.CDLL
 
     def __init__(self):
+        """
+        Warning:
+            Internal function
+            Do not construct this type
+        """
         self._lib_handle = get_library_handle()
         self._tag_handle = None
 

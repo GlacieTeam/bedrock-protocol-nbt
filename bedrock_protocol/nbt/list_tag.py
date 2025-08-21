@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag import Tag
 from typing import List, Optional
 
@@ -27,7 +28,10 @@ class ListTag(Tag):
         Returns:
             None if failed
         """
-        return self.get(index)
+        result = self.get(index)
+        if result is not None:
+            return CompoundTagVariant(self, result, index)
+        return None
 
     def __setitem__(self, index: int, value: Tag) -> bool:
         """Set a tag in the ListTag

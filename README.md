@@ -10,20 +10,24 @@ pip install bedrock-protocol-nbt
 ```Python
 from bedrock_protocol.nbt import *
 
-nbt = CompoundTag()
-nbt["string_tag"] = StringTag("Test String")
-nbt["byte_tag"] = ByteTag(114)
-nbt["short_tag"] = ShortTag(19132)
-nbt["int_tag"] = IntTag(114514)
-nbt["int64_tag"] = Int64Tag(1145141919810)
-nbt["float_tag"] = FloatTag(114.514)
-nbt["double_tag"] = DoubleTag(3.1415926535897)
-nbt["byte_array_tag"] = ByteArrayTag(b"13276273923")
-nbt["list_tag"] = ListTag([StringTag("1111"), StringTag("2222")])
-nbt["compound_tag"] = nbt
-nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
+# Build a nbt
+nbt = CompoundTag(
+    {
+        "string": StringTag("Test String"),
+        "byte", ByteTag(114)
+        "short", ShortTag(19132)
+        "int", IntTag(114514)
+        "int64", Int64Tag(1145141919810)
+        "float", FloatTag(114.514)
+        "double", DoubleTag(3.1415926535897)
+        "byte_array", ByteArrayTag(b"13276273923")
+        "list", ListTag([StringTag("1111"), StringTag("2222")])
+        "compound", nbt
+        "int_array", IntArrayTag([1, 2, 3, 4, 5, 6, 7])
+    }
+)
 
-print(nbt.to_snbt())
+print(nbt.to_snbt()) # to string nbt
 ```
 
 # Used Libraries

@@ -18,7 +18,8 @@ from bedrock_protocol.nbt.byte_array_tag import ByteArrayTag
 from bedrock_protocol.nbt.string_tag import StringTag
 from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
-from typing import List, Optional, Union
+from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
+from typing import List, Optional, Union, Dict
 import ctypes
 
 
@@ -28,24 +29,29 @@ class CompoundTag(Tag):
     A Tag contains map of tags
     """
 
-    def __init__(self):
+    def __init__(self, tag_map: Optional[Dict[Union[bytes, str], Tag]] = None):
         """Create a CompoundTag"""
         super().__init__()
         self._tag_handle = self._lib_handle.nbt_compound_tag_create()
+        if tag_map is not None:
+            for key, val in tag_map.items():
+                self.put(key, val)
 
-    def __getitem__(self, key: Union[bytes, str]) -> Tag:
+    def __getitem__(self, key: Union[bytes, str]) -> CompoundTagVariant:
         """Get a tag in the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
         Returns:
             None if failed
         """
-        return self.get(key)
+        if not self.contains(key):
+            self.set(key, CompoundTag())
+        return CompoundTagVariant(self, self.get(key), key)
 
     def __setitem__(self, key: Union[bytes, str], value: Tag) -> bool:
         """Set a tag in the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
             value: new tag to set
         Returns:
             True if succeed
@@ -55,7 +61,7 @@ class CompoundTag(Tag):
     def __delitem__(self, key: Union[bytes, str]) -> bool:
         """Delete value from the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
         Returns:
             True if pop succeed
         """
@@ -92,7 +98,7 @@ class CompoundTag(Tag):
     def pop(self, key: Union[bytes, str]) -> bool:
         """Delete value from the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
         Returns:
             True if pop succeed
         """
@@ -108,7 +114,7 @@ class CompoundTag(Tag):
     def put(self, key: Union[bytes, str], value: Tag) -> bool:
         """Set a tag in the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
             value: new tag to set
         Returns:
             True if succeed
@@ -122,10 +128,20 @@ class CompoundTag(Tag):
             self._tag_handle, char_ptr, length, value._tag_handle
         )
 
+    def set(self, key: Union[bytes, str], value: Tag) -> bool:
+        """Set a tag in the CompoundTag
+        Args:
+            key: the key of the tag
+            value: new tag to set
+        Returns:
+            True if succeed
+        """
+        return self.put(key, value)
+
     def get(self, key: Union[bytes, str]) -> Optional[Tag]:
         """Get a tag in the CompoundTag
         Args:
-            key: the key of the tag to pop (default the end)
+            key: the key of the tag
         Returns:
             None if failed
         """
