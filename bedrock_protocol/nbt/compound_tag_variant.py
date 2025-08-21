@@ -42,7 +42,10 @@ class CompoundTagVariant:
         if result is None and isinstance(index, (bytes, str)):
             from bedrock_protocol.nbt.compound_tag import CompoundTag
 
-            self._value.set(index, CompoundTag())
+            if self._value.get_type() == TagType.Compound:
+                self._value.put(index, CompoundTag())
+            else:
+                self._value.set(index, CompoundTag())
             result = self._value.get(index)
             return CompoundTagVariant(self._value, result, index)
         elif isinstance(result, Tag):
@@ -53,8 +56,14 @@ class CompoundTagVariant:
         parent = self._parent()
         if parent is None:
             return None
-        self._value.set(index, value)
-        parent.set(self._index, self._value)
+        if self._value.get_type() == TagType.Compound:
+            self._value.put(self._index, self._value)
+        else:
+            self._value.set(self._index, self._value)
+        if parent.get_type() == TagType.Compound:
+            parent.put(self._index, self._value)
+        else:
+            parent.set(self._index, self._value)
 
     def __delitem__(self, index: Union[bytes, str, int]) -> bool:
         return self.pop(index)
@@ -94,6 +103,9 @@ class CompoundTagVariant:
             return False
         if self._value.get_type() == TagType.List:
             self._value.append(value)
-            parent.set(self._index, self._value)
+            if parent.get_type() == TagType.Compound:
+                parent.put(self._index, self._value)
+            else:
+                parent.set(self._index, self._value)
         else:
             raise TypeError("Tag is not a ListTag")

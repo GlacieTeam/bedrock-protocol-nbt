@@ -47,7 +47,7 @@ class CompoundTag(Tag):
             None if failed
         """
         if not self.contains(key):
-            self.set(key, CompoundTag())
+            self.put(key, CompoundTag())
         return CompoundTagVariant(self, self.get(key), key)
 
     def __setitem__(self, key: Union[bytes, str], value: Tag) -> bool:
@@ -129,16 +129,6 @@ class CompoundTag(Tag):
         return self._lib_handle.nbt_compound_tag_set_tag(
             self._tag_handle, char_ptr, length, value._tag_handle
         )
-
-    def set(self, key: Union[bytes, str], value: Tag) -> bool:
-        """Set a tag in the CompoundTag
-        Args:
-            key: the key of the tag
-            value: new tag to set
-        Returns:
-            True if succeed
-        """
-        return self.put(key, value)
 
     def get(self, key: Union[bytes, str]) -> Optional[Tag]:
         """Get a tag in the CompoundTag
