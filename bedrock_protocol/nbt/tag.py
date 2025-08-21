@@ -6,7 +6,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
-from bedrock_protocol.binarystream import ReadOnlyBinaryStream, BinaryStream
 from bedrock_protocol.nbt.tag_type import TagType
 import ctypes
 
@@ -130,14 +129,14 @@ class Tag:
         result._update_type()
         return result
 
-    def write(self, stream: BinaryStream) -> None:
+    def serialize(self, stream: "BinaryStream") -> None:  # type: ignore
         """
         Args:
             BinaryStream: output stream
         """
         self._lib_handle.nbt_any_tag_write(self._tag_handle, stream._stream_handle)
 
-    def load(self, stream: ReadOnlyBinaryStream) -> None:
+    def deserialize(self, stream: "ReadOnlyBinaryStream") -> None:  # type: ignore
         """
         Args:
             ReadOnlyBinaryStream: input stream

@@ -19,6 +19,7 @@ from bedrock_protocol.nbt.string_tag import StringTag
 from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
+from bedrock_protocol.nbt.tag_type import TagType
 from typing import List, Optional, Union, Dict
 import ctypes
 
@@ -404,6 +405,23 @@ class CompoundTag(Tag):
         if tag is not None:
             return tag.get_list()
         return None
+
+    def write(self, stream: "BinaryStream") -> None:  # type: ignore
+        """
+        Args:
+            BinaryStream: output stream
+        """
+        stream.write_byte(TagType.Compound)
+        stream.write_byte(0)
+        self._lib_handle.nbt_any_tag_write(self._tag_handle, stream._stream_handle)
+
+    def read(self, stream: "ReadOnlyBinaryStream") -> None:  # type: ignore
+        """
+        Args:
+            ReadOnlyBinaryStream: input stream
+        """
+        stream.ignore_bytes(2)
+        self._lib_handle.nbt_any_tag_load(self._tag_handle, stream._stream_handle)
 
     def to_binary_nbt(self, little_endian: bool = True) -> bytes:
         """Encode the CompoundTag to binary NBT format

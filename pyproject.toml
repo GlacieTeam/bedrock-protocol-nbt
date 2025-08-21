@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bedrock-protocol-nbt"
-version = "1.1.2"
+version = "1.2.0"
 authors = [{ name = "GlacieTeam" }]
 description = "Minecraft NBT Library"
 readme = "README.md"
@@ -15,7 +15,7 @@ classifiers = [
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
     "Operating System :: OS Independent",
 ]
-dependencies = ["bedrock-protocol-binarystream >= 1.1.0"]
+dependencies = []
 
 [project.urls]
 homepage = "https://github.com/GlacieTeam/bedrock-protocol-nbt"

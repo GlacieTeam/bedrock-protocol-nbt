@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from bedrock_protocol.nbt import *
+from bedrock_protocol.binarystream import *
 
 
 def test1():
@@ -69,6 +70,29 @@ def test3():
     print(f'{nbt.get_byte("not exist")}')
 
 
+def test4():
+    testnbt = CompoundTag(
+        {
+            "string_tag": StringTag("Test String"),
+            "byte_tag": ByteTag(114),
+            "short_tag": ShortTag(19132),
+            "int_tag": IntTag(114514),
+        }
+    )
+    stream = BinaryStream()
+    stream.write_byte(23)
+    testnbt.write(stream)
+    buffer = stream.data()
+    print(
+        f"{buffer.hex()} | {buffer.hex() == "170a000108627974655f746167720307696e745f746167a4fd0d020973686f72745f746167bc4a080a737472696e675f7461670b5465737420537472696e6700"}"
+    )
+
+    print(f"{stream.get_byte()}")
+    nbt = CompoundTag()
+    nbt.read(stream)
+    print(f"{nbt.to_snbt()}")
+
+
 if __name__ == "__main__":
     print("-" * 25, "Test1", "-" * 25)
     test1()
@@ -76,4 +100,6 @@ if __name__ == "__main__":
     test2()
     print("-" * 25, "Test3", "-" * 25)
     test3()
+    print("-" * 25, "Test4", "-" * 25)
+    test4()
     print("-" * 25, "END", "-" * 25)
