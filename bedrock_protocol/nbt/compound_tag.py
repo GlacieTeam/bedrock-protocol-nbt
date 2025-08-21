@@ -426,19 +426,27 @@ class CompoundTag(Tag):
             return tag.get_list()
         return None
 
-    def write(self, stream: "BinaryStream") -> None:  # type: ignore
-        """
+    def write(self, stream: Any) -> None:
+        """Serialize NBT into a BinaryStream in network NBT format
         Args:
             BinaryStream: output stream
+
+        Warning:
+            Requires package 'bedrock-protocol-binarystream' to be installed
+            stream must be a instance of bedrock_protocol.binarystream.BinaryStream
         """
         stream.write_byte(TagType.Compound)
         stream.write_byte(0)
         self._lib_handle.nbt_any_tag_write(self._tag_handle, stream._stream_handle)
 
-    def read(self, stream: "ReadOnlyBinaryStream") -> None:  # type: ignore
-        """
+    def read(self, stream: Any) -> None:
+        """Deserialize NBT from a ReadOnlyBinaryStream in network NBT format
         Args:
             ReadOnlyBinaryStream: input stream
+
+        Warning:
+            Requires package 'bedrock-protocol-binarystream' to be installed
+            stream must be a instance of bedrock_protocol.binarystream.ReadOnlyBinaryStream
         """
         stream.ignore_bytes(2)
         self._lib_handle.nbt_any_tag_load(self._tag_handle, stream._stream_handle)

@@ -7,6 +7,7 @@
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag_type import TagType
+from typing import Any
 import ctypes
 
 
@@ -129,16 +130,24 @@ class Tag:
         result._update_type()
         return result
 
-    def serialize(self, stream: "BinaryStream") -> None:  # type: ignore
-        """
+    def serialize(self, stream: Any) -> None:
+        """Serialize a Tag into a BinaryStream in network NBT format
         Args:
             BinaryStream: output stream
+
+        Warning:
+            Requires package 'bedrock-protocol-binarystream' to be installed
+            stream must be a instance of bedrock_protocol.binarystream.BinaryStream
         """
         self._lib_handle.nbt_any_tag_write(self._tag_handle, stream._stream_handle)
 
-    def deserialize(self, stream: "ReadOnlyBinaryStream") -> None:  # type: ignore
-        """
+    def deserialize(self, stream: Any) -> None:
+        """Deserialize a tag from a ReadOnlyBinaryStream in network NBT format
         Args:
             ReadOnlyBinaryStream: input stream
+
+        Warning:
+            Requires package 'bedrock-protocol-binarystream' to be installed
+            stream must be a instance of bedrock_protocol.binarystream.ReadOnlyBinaryStream
         """
         self._lib_handle.nbt_any_tag_load(self._tag_handle, stream._stream_handle)
