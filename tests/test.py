@@ -24,10 +24,12 @@ def test1():
     nbt["byte_array_tag"] = ByteArrayTag(b"13276273923")
     nbt["list_tag"] = ListTag([StringTag("aaaaa"), StringTag("bbbbb")])
     nbt["list_tag"].append(StringTag("Homo"))
-    nbt["compound_tag"] = CompoundTag()
+    nbt["compound_tag"] = nbt
     nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
     print(nbt.to_snbt())
     print(f'{nbt["test"]["double_tag"].get_value()}')
+    print(f'{nbt["not_exist"]["not_exist"].get_value()}')
+    print(f'{nbt["compound_tag"].get_value()}')
 
 
 def test2():
@@ -53,7 +55,7 @@ def test3():
     nbt.put_byte_array("tag_byte_array", b"45678909876")
     nbt.put_list("tag_list", [nbt, nbt])
     nbt.put_int_array("tag_int_array", [1, 2, 3, 4, 5, 6, 7])
-    nbt.put_compound("tag_compound", nbt)
+    nbt.put_compound("tag_compound", {})
     print(nbt.to_snbt())
     print(f'{nbt.get_string("tag_string")}')
     print(f'{nbt.get_binary_string("tag_binary_string")}')

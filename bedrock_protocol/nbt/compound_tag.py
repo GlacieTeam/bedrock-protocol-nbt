@@ -20,8 +20,9 @@ from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag_type import TagType
-from typing import List, Optional, Union, Dict
+from typing import Any, List, Optional, Set, Union, Dict
 import ctypes
+import json
 
 
 class CompoundTag(Tag):
@@ -30,13 +31,13 @@ class CompoundTag(Tag):
     A Tag contains map of tags
     """
 
+    _tag_entries: Set[Union[bytes, str]]
+
     def __init__(self, tag_map: Optional[Dict[Union[bytes, str], Tag]] = None):
         """Create a CompoundTag"""
         super().__init__()
         self._tag_handle = self._lib_handle.nbt_compound_tag_create()
-        if tag_map is not None:
-            for key, val in tag_map.items():
-                self.put(key, val)
+        self.set_tag_map(tag_map)
 
     def __getitem__(self, key: Union[bytes, str]) -> CompoundTagVariant:
         """Get a tag in the CompoundTag
@@ -160,6 +161,31 @@ class CompoundTag(Tag):
             result._update_type()
             return result
         return None
+
+    def set_tag_map(self, tag_map: Dict[Union[bytes, str], Tag]) -> None:
+        """Set the tag map
+        Args:
+            key: the key of the tag
+            value: new tag to set
+        Returns:
+            True if succeed
+        """
+        if tag_map is not None:
+            for key, val in tag_map.items():
+                self.put(key, val)
+
+    def get_tag_map(self) -> Optional[Dict[Union[bytes, str], Tag]]:
+        """Get the tag map
+        Args:
+            key: the key of the tag
+        Returns:
+            None if failed
+        """
+        result = dict()
+        entries = self.to_dict().keys()
+        for key in entries:
+            result[key] = self.get(key)
+        return result
 
     def clear(self) -> None:
         """Clear all tags in the CompoundTag"""
@@ -349,22 +375,26 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_compound(self, key: Union[bytes, str], value: "CompoundTag") -> None:
+    def put_compound(
+        self, key: Union[bytes, str], value: Dict[Union[bytes, str], Tag]
+    ) -> None:
         """Put a CompoundTag in this CompoundTag
         Args:
             key: the key of the tag
             value: the CompoundTag
         """
-        self.put(key, value)
+        self.put(key, CompoundTag(value))
 
-    def get_compound(self, key: Union[bytes, str]) -> Optional["CompoundTag"]:
+    def get_compound(
+        self, key: Union[bytes, str]
+    ) -> Optional[Dict[Union[bytes, str], Tag]]:
         """Get a CompoundTag in this CompoundTag
         Args:
             key: the key of the tag
         Returns:
             the CompoundTag
         """
-        return self.get(key)
+        return self.get(key).get_tag_map()
 
     def put_list(self, key: Union[bytes, str], value: List[Tag]) -> None:
         """Put a ListTag in this CompoundTag
@@ -452,7 +482,7 @@ class CompoundTag(Tag):
     ) -> str:
         """Encode the CompoundTag to network NBT format
         Returns:
-            serialized bytes
+            serialized snbt string
         """
         buffer = self._lib_handle.nbt_compound_to_snbt(self._tag_handle, format, indent)
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
@@ -465,7 +495,7 @@ class CompoundTag(Tag):
     def to_json(self, indent: int = 4) -> str:
         """Encode the CompoundTag to JSON
         Returns:
-            serialized bytes
+            serialized json string
 
         Warning:
             JSON can NOT be deserialized to NBT
@@ -478,8 +508,21 @@ class CompoundTag(Tag):
         except UnicodeDecodeError:
             return ""
 
+    def to_dict(self, indent: int = 4) -> Dict[str, Any]:
+        """Encode the CompoundTag to dict
+        Returns:
+            serialized dict
+
+        Warning:
+            dict can NOT be deserialized to NBT
+        """
+        json_str = self.to_json()
+        return json.loads(json_str)
+
     @staticmethod
-    def from_binary_nbt(content: bytes, little_endian: bool = True) -> "CompoundTag":
+    def from_binary_nbt(
+        content: bytes, little_endian: bool = True
+    ) -> Optional["CompoundTag"]:
         """Parse binary NBT
         Args:
             little_endian: whether use little-endian bytes order
@@ -500,7 +543,7 @@ class CompoundTag(Tag):
         return None
 
     @staticmethod
-    def from_network_nbt(content: bytes) -> "CompoundTag":
+    def from_network_nbt(content: bytes) -> Optional["CompoundTag"]:
         """Parse network NBT
         Returns:
             CompoundTag
@@ -519,7 +562,7 @@ class CompoundTag(Tag):
         return None
 
     @staticmethod
-    def from_snbt(content: str) -> "CompoundTag":
+    def from_snbt(content: str) -> Optional["CompoundTag"]:
         """Parse SNBT
         Returns:
             CompoundTag or None

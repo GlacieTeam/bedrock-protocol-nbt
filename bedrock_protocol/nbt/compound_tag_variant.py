@@ -42,8 +42,9 @@ class CompoundTagVariant:
         if result is None and isinstance(index, (bytes, str)):
             from bedrock_protocol.nbt.compound_tag import CompoundTag
 
-            self._value.set(index, CompoundTag)
+            self._value.set(index, CompoundTag())
             result = self._value.get(index)
+            return CompoundTagVariant(self._value, result, index)
         elif isinstance(result, Tag):
             return CompoundTagVariant(self._value, result, index)
         return result
@@ -70,7 +71,14 @@ class CompoundTagVariant:
         Returns:
             Tag: _description_
         """
-        return self._value.get()
+        if self._value is not None:
+            if self._value.get_type() == TagType.Compound:
+                return self._value.get_tag_map()
+            elif self._value.get_type() == TagType.List:
+                return self._value.get_list()
+            else:
+                return self._value.get()
+        return None
 
     def pop(self, index: Union[bytes, str, int]) -> bool:
         parent = self._parent()
