@@ -31,8 +31,6 @@ class CompoundTag(Tag):
     A Tag contains map of tags
     """
 
-    _tag_entries: Set[Union[bytes, str]]
-
     def __init__(self, tag_map: Optional[Dict[Union[bytes, str], Tag]] = None):
         """Create a CompoundTag"""
         super().__init__()
