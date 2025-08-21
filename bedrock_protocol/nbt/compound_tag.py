@@ -498,7 +498,7 @@ class CompoundTag(Tag):
         except UnicodeDecodeError:
             return ""
 
-    def to_dict(self, indent: int = 4) -> Dict[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         """Encode the CompoundTag to dict
         Returns:
             serialized dict
