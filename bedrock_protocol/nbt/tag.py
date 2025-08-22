@@ -35,7 +35,10 @@ class Tag:
         """
         self._lib_handle.nbt_any_tag_destroy(self._tag_handle)
 
-    def __deepcopy__(self, memo):
+    def __copy__(self):
+        return self.deep_copy()
+
+    def __deepcopy__(self, _):
         return self.deep_copy()
 
     def __str__(self):
