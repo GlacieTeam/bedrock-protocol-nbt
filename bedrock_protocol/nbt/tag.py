@@ -34,6 +34,9 @@ class Tag:
         """
         self._lib_handle.nbt_any_tag_destroy(self._tag_handle)
 
+    def __deepcopy__(self, memo):
+        return self.deep_copy()
+
     @staticmethod
     def __create_tag_by_handle(handle: ctypes.c_void_p):
         result = Tag.__new__(Tag)
@@ -43,11 +46,6 @@ class Tag:
         return result
 
     def __update_type(self):
-        """
-        Warning:
-            Internal function
-            update object type
-        """
         tag_type = self.get_type()
         if tag_type == TagType.End:
             from bedrock_protocol.nbt.end_tag import EndTag

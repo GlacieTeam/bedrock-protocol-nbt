@@ -16,11 +16,9 @@ class CompoundTagVariant:
 
     _parent: "weakref.ref[Tag]"
     _value: Optional[Tag]
-    _index: Union[bytes, str, int]
+    _index: Union[str, int]
 
-    def __init__(
-        self, parent: Tag, value: Optional[Tag], index: Union[bytes, str, int]
-    ):
+    def __init__(self, parent: Tag, value: Optional[Tag], index: Union[str, int]):
         """
         Warning:
             Internal function
@@ -32,14 +30,12 @@ class CompoundTagVariant:
         self._value = value
         self._index = index
 
-    def __getitem__(
-        self, index: Union[bytes, str, int]
-    ) -> Optional["CompoundTagVariant"]:
+    def __getitem__(self, index: Union[str, int]) -> Optional["CompoundTagVariant"]:
         parent = self._parent()
         if parent is None:
             return None
         result = self._value.get(index)
-        if result is None and isinstance(index, (bytes, str)):
+        if result is None and isinstance(index, str):
             from bedrock_protocol.nbt.compound_tag import CompoundTag
 
             if self._value.get_type() == TagType.Compound:
@@ -52,20 +48,20 @@ class CompoundTagVariant:
             return CompoundTagVariant(self._value, result, index)
         return result
 
-    def __setitem__(self, index: Union[bytes, str, int], value: Tag) -> Any:
+    def __setitem__(self, index: Union[str, int], value: Tag) -> Any:
         parent = self._parent()
         if parent is None:
             return None
         if self._value.get_type() == TagType.Compound:
-            self._value.put(self._index, self._value)
+            self._value.put(index, value)
         else:
-            self._value.set(self._index, self._value)
+            self._value.set(index, value)
         if parent.get_type() == TagType.Compound:
             parent.put(self._index, self._value)
         else:
             parent.set(self._index, self._value)
 
-    def __delitem__(self, index: Union[bytes, str, int]) -> bool:
+    def __delitem__(self, index: Union[str, int]) -> bool:
         return self.pop(index)
 
     def get(self) -> Tag:
@@ -89,7 +85,7 @@ class CompoundTagVariant:
                 return self._value.get()
         return None
 
-    def pop(self, index: Union[bytes, str, int]) -> bool:
+    def pop(self, index: Union[str, int]) -> bool:
         parent = self._parent()
         if parent is None:
             return False
