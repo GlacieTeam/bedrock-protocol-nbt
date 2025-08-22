@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
+from bedrock_protocol.nbt.snbt_format import SnbtFormat
 from bedrock_protocol.nbt.tag_type import TagType
 from typing import Any
 import ctypes
@@ -36,6 +37,9 @@ class Tag:
 
     def __deepcopy__(self, memo):
         return self.deep_copy()
+
+    def __str__(self):
+        return self.to_snbt(SnbtFormat.Minimize, 0)
 
     @staticmethod
     def __create_tag_by_handle(handle: ctypes.c_void_p):
@@ -150,3 +154,28 @@ class Tag:
             stream must be a instance of bedrock_protocol.binarystream.ReadOnlyBinaryStream
         """
         self._lib_handle.nbt_any_tag_load(self._tag_handle, stream._stream_handle)
+
+    def to_snbt(
+        self, format: SnbtFormat = SnbtFormat.PrettyFilePrint, indent: int = 4
+    ) -> str:
+        """Encode the Tag to network NBT format
+        Returns:
+            serialized snbt string
+        """
+        buffer = self._lib_handle.nbt_compound_to_snbt(self._tag_handle, format, indent)
+        result = bytes(ctypes.string_at(buffer.data, buffer.size))
+        self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
+        return result.decode("utf-8")
+
+    def to_json(self, indent: int = 4) -> str:
+        """Encode the CompoundTag to JSON
+        Returns:
+            serialized json string
+
+        Warning:
+            JSON can NOT be deserialized to NBT
+        """
+        buffer = self._lib_handle.nbt_compound_to_json(self._tag_handle, indent)
+        result = bytes(ctypes.string_at(buffer.data, buffer.size))
+        self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
+        return result.decode("utf-8")

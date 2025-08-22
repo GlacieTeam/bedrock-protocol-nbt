@@ -27,10 +27,10 @@ def test1():
     nbt["compound_tag"] = nbt
     nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
     print(nbt.to_snbt())
-    print(f'{nbt["test"]["double_tag"].get_value()}')
-    print(f'{nbt["not_exist"]["not_exist"].get_value()}')
-    print(f'{nbt["compound_tag"].get_value()}')
-    print(f'{nbt["list_tag"][0].get_value()}')
+    print(f'{nbt["test"]["double_tag"].get()}')
+    print(f'{nbt["not_exist"]["not_exist"].get()}')
+    print(f'{nbt["compound_tag"].get()}')
+    print(f'{nbt["list_tag"][0].get()}')
 
 
 def test2():
@@ -99,10 +99,10 @@ def test4():
 if __name__ == "__main__":
     print("-" * 25, "Test1", "-" * 25)
     test1()
-    print("-" * 25, "Test2", "-" * 25)
-    test2()
-    print("-" * 25, "Test3", "-" * 25)
-    test3()
-    print("-" * 25, "Test4", "-" * 25)
-    test4()
+    #  print("-" * 25, "Test2", "-" * 25)
+    # test2()
+    # print("-" * 25, "Test3", "-" * 25)
+    #  test3()
+    #  print("-" * 25, "Test4", "-" * 25)
+    #  test4()
     print("-" * 25, "END", "-" * 25)

@@ -160,7 +160,7 @@ class CompoundTag(Tag):
             None if failed
         """
         result = dict()
-        entries = self.to_dict().keys()
+        entries = json.loads(self.to_json()).keys()
         for key in entries:
             result[key] = self.get(key)
         return result
@@ -454,44 +454,6 @@ class CompoundTag(Tag):
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
         return result
-
-    def to_snbt(
-        self, format: SnbtFormat = SnbtFormat.PrettyFilePrint, indent: int = 4
-    ) -> str:
-        """Encode the CompoundTag to network NBT format
-        Returns:
-            serialized snbt string
-        """
-        buffer = self._lib_handle.nbt_compound_to_snbt(self._tag_handle, format, indent)
-        result = bytes(ctypes.string_at(buffer.data, buffer.size))
-        self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
-        try:
-            return result.decode("utf-8")
-        except UnicodeDecodeError:
-            return ""
-
-    def to_json(self, indent: int = 4) -> str:
-        """Encode the CompoundTag to JSON
-        Returns:
-            serialized json string
-
-        Warning:
-            JSON can NOT be deserialized to NBT
-        """
-        buffer = self._lib_handle.nbt_compound_to_json(self._tag_handle, indent)
-        result = bytes(ctypes.string_at(buffer.data, buffer.size))
-        self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
-        return result.decode("utf-8")
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Encode the CompoundTag to dict
-        Returns:
-            serialized dict
-
-        Warning:
-            dict can NOT be deserialized to NBT
-        """
-        return json.loads(self.to_json())
 
     @staticmethod
     def from_binary_nbt(
