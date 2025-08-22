@@ -20,7 +20,7 @@ from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag_type import TagType
-from typing import Any, List, Optional, Set, Union, Dict
+from typing import Any, List, Optional, Union, Dict
 import ctypes
 import json
 
@@ -31,13 +31,13 @@ class CompoundTag(Tag):
     A Tag contains map of tags
     """
 
-    def __init__(self, tag_map: Optional[Dict[Union[bytes, str], Tag]] = None):
+    def __init__(self, tag_map: Optional[Dict[str, Tag]] = None):
         """Create a CompoundTag"""
         super().__init__()
         self._tag_handle = self._lib_handle.nbt_compound_tag_create()
         self.set_tag_map(tag_map)
 
-    def __getitem__(self, key: Union[bytes, str]) -> CompoundTagVariant:
+    def __getitem__(self, key: str) -> CompoundTagVariant:
         """Get a tag in the CompoundTag
         Args:
             key: the key of the tag
@@ -48,7 +48,7 @@ class CompoundTag(Tag):
             self.put(key, CompoundTag())
         return CompoundTagVariant(self, self.get(key), key)
 
-    def __setitem__(self, key: Union[bytes, str], value: Tag) -> bool:
+    def __setitem__(self, key: str, value: Tag) -> bool:
         """Set a tag in the CompoundTag
         Args:
             key: the key of the tag
@@ -58,7 +58,7 @@ class CompoundTag(Tag):
         """
         return self.put(key, value)
 
-    def __delitem__(self, key: Union[bytes, str]) -> bool:
+    def __delitem__(self, key: str) -> bool:
         """Delete value from the CompoundTag
         Args:
             key: the key of the tag
@@ -67,7 +67,7 @@ class CompoundTag(Tag):
         """
         return self.pop(key)
 
-    def __contains__(self, key: Union[bytes, str]) -> bool:
+    def __contains__(self, key: str) -> bool:
         """check the CompoundTag contains a key-value
         Returns:
             True if contains
@@ -81,37 +81,33 @@ class CompoundTag(Tag):
         """
         return self._lib_handle.nbt_compound_tag_size(self._tag_handle)
 
-    def contains(self, key: Union[bytes, str]) -> bool:
+    def contains(self, key: str) -> bool:
         """check the CompoundTag contains a key-value
         Returns:
             True if contains
         """
-        index = key
-        if isinstance(index, str):
-            index = key.encode("utf-8")
+        index = key.encode("utf-8")
         length = len(index)
         char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_has_tag(
             self._tag_handle, char_ptr, length
         )
 
-    def pop(self, key: Union[bytes, str]) -> bool:
+    def pop(self, key: str) -> bool:
         """Delete value from the CompoundTag
         Args:
             key: the key of the tag
         Returns:
             True if pop succeed
         """
-        index = key
-        if isinstance(index, str):
-            index = key.encode("utf-8")
+        index = key.encode("utf-8")
         length = len(index)
         char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_remove_tag(
             self._tag_handle, char_ptr, length
         )
 
-    def put(self, key: Union[bytes, str], value: Tag) -> bool:
+    def put(self, key: str, value: Tag) -> bool:
         """Set a tag in the CompoundTag
         Args:
             key: the key of the tag
@@ -119,25 +115,21 @@ class CompoundTag(Tag):
         Returns:
             True if succeed
         """
-        index = key
-        if isinstance(index, str):
-            index = key.encode("utf-8")
+        index = key.encode("utf-8")
         length = len(index)
         char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_set_tag(
             self._tag_handle, char_ptr, length, value._tag_handle
         )
 
-    def get(self, key: Union[bytes, str]) -> Optional[Tag]:
+    def get(self, key: str) -> Optional[Tag]:
         """Get a tag in the CompoundTag
         Args:
             key: the key of the tag
         Returns:
             None if failed
         """
-        index = key
-        if isinstance(index, str):
-            index = key.encode("utf-8")
+        index = key.encode("utf-8")
         length = len(index)
         char_ptr = ctypes.c_char_p(index)
         handle = self._lib_handle.nbt_compound_tag_get_tag(
@@ -150,7 +142,7 @@ class CompoundTag(Tag):
             return result
         return None
 
-    def set_tag_map(self, tag_map: Dict[Union[bytes, str], Tag]) -> None:
+    def set_tag_map(self, tag_map: Dict[str, Tag]) -> None:
         """Set the tag map
         Args:
             key: the key of the tag
@@ -162,7 +154,7 @@ class CompoundTag(Tag):
             for key, val in tag_map.items():
                 self.put(key, val)
 
-    def get_tag_map(self) -> Optional[Dict[Union[bytes, str], Tag]]:
+    def get_tag_map(self) -> Optional[Dict[str, Tag]]:
         """Get the tag map
         Args:
             key: the key of the tag
@@ -179,7 +171,7 @@ class CompoundTag(Tag):
         """Clear all tags in the CompoundTag"""
         self._lib_handle.nbt_compound_tag_clear(self._tag_handle)
 
-    def put_byte(self, key: Union[bytes, str], value: int) -> None:
+    def put_byte(self, key: str, value: int) -> None:
         """Put a ByteTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -187,7 +179,7 @@ class CompoundTag(Tag):
         """
         self.put(key, ByteTag(value))
 
-    def get_byte(self, key: Union[bytes, str]) -> Optional[int]:
+    def get_byte(self, key: str) -> Optional[int]:
         """Get a ByteTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -199,7 +191,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_short(self, key: Union[bytes, str], value: int) -> None:
+    def put_short(self, key: str, value: int) -> None:
         """Put a ShortTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -207,7 +199,7 @@ class CompoundTag(Tag):
         """
         self.put(key, ShortTag(value))
 
-    def get_short(self, key: Union[bytes, str]) -> Optional[int]:
+    def get_short(self, key: str) -> Optional[int]:
         """Get a ShortTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -219,7 +211,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_int(self, key: Union[bytes, str], value: int) -> None:
+    def put_int(self, key: str, value: int) -> None:
         """Put a IntTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -227,7 +219,7 @@ class CompoundTag(Tag):
         """
         self.put(key, IntTag(value))
 
-    def get_int(self, key: Union[bytes, str]) -> Optional[int]:
+    def get_int(self, key: str) -> Optional[int]:
         """Get a IntTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -239,7 +231,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_int64(self, key: Union[bytes, str], value: int) -> None:
+    def put_int64(self, key: str, value: int) -> None:
         """Put a Int64Tag in this CompoundTag
         Args:
             key: the key of the tag
@@ -247,7 +239,7 @@ class CompoundTag(Tag):
         """
         self.put(key, Int64Tag(value))
 
-    def get_int64(self, key: Union[bytes, str]) -> Optional[int]:
+    def get_int64(self, key: str) -> Optional[int]:
         """Get a Int64Tag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -259,7 +251,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_float(self, key: Union[bytes, str], value: float) -> None:
+    def put_float(self, key: str, value: float) -> None:
         """Put a FloatTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -267,7 +259,7 @@ class CompoundTag(Tag):
         """
         self.put(key, FloatTag(value))
 
-    def get_float(self, key: Union[bytes, str]) -> Optional[float]:
+    def get_float(self, key: str) -> Optional[float]:
         """Get a FloatTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -279,7 +271,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_double(self, key: Union[bytes, str], value: float) -> None:
+    def put_double(self, key: str, value: float) -> None:
         """Put a DoubleTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -287,7 +279,7 @@ class CompoundTag(Tag):
         """
         self.put(key, DoubleTag(value))
 
-    def get_double(self, key: Union[bytes, str]) -> Optional[float]:
+    def get_double(self, key: str) -> Optional[float]:
         """Get a DoubleTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -299,9 +291,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_byte_array(
-        self, key: Union[bytes, str], value: Union[bytearray, bytes]
-    ) -> None:
+    def put_byte_array(self, key: str, value: Union[bytearray, bytes]) -> None:
         """Put a ByteArrayTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -309,7 +299,7 @@ class CompoundTag(Tag):
         """
         self.put(key, ByteArrayTag(value))
 
-    def get_byte_array(self, key: Union[bytes, str]) -> Optional[bytes]:
+    def get_byte_array(self, key: str) -> Optional[bytes]:
         """Get a ByteArrayTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -321,7 +311,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_string(self, key: Union[bytes, str], value: str) -> None:
+    def put_string(self, key: str, value: str) -> None:
         """Put a StringTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -329,7 +319,7 @@ class CompoundTag(Tag):
         """
         self.put(key, StringTag(value))
 
-    def get_string(self, key: Union[bytes, str]) -> Optional[str]:
+    def get_string(self, key: str) -> Optional[str]:
         """Get a StringTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -341,9 +331,7 @@ class CompoundTag(Tag):
             return tag.get_str()
         return None
 
-    def put_binary_string(
-        self, key: Union[bytes, str], value: Union[bytearray, bytes]
-    ) -> None:
+    def put_binary_string(self, key: str, value: Union[bytearray, bytes]) -> None:
         """Put a StringTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -351,7 +339,7 @@ class CompoundTag(Tag):
         """
         self.put(key, StringTag(value))
 
-    def get_binary_string(self, key: Union[bytes, str]) -> Optional[bytes]:
+    def get_binary_string(self, key: str) -> Optional[bytes]:
         """Get a StringTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -363,9 +351,7 @@ class CompoundTag(Tag):
             return tag.get()
         return None
 
-    def put_compound(
-        self, key: Union[bytes, str], value: Dict[Union[bytes, str], Tag]
-    ) -> None:
+    def put_compound(self, key: str, value: Dict[str, Tag]) -> None:
         """Put a CompoundTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -373,9 +359,7 @@ class CompoundTag(Tag):
         """
         self.put(key, CompoundTag(value))
 
-    def get_compound(
-        self, key: Union[bytes, str]
-    ) -> Optional[Dict[Union[bytes, str], Tag]]:
+    def get_compound(self, key: str) -> Optional[Dict[str, Tag]]:
         """Get a CompoundTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -384,7 +368,7 @@ class CompoundTag(Tag):
         """
         return self.get(key).get_tag_map()
 
-    def put_list(self, key: Union[bytes, str], value: List[Tag]) -> None:
+    def put_list(self, key: str, value: List[Tag]) -> None:
         """Put a ListTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -392,7 +376,7 @@ class CompoundTag(Tag):
         """
         self.put(key, ListTag(value))
 
-    def get_list(self, key: Union[bytes, str]) -> Optional[List[Tag]]:
+    def get_list(self, key: str) -> Optional[List[Tag]]:
         """Get a ListTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -404,7 +388,7 @@ class CompoundTag(Tag):
             return tag.get_list()
         return None
 
-    def put_int_array(self, key: Union[bytes, str], value: List[int]) -> None:
+    def put_int_array(self, key: str, value: List[int]) -> None:
         """Put a IntArrayTag in this CompoundTag
         Args:
             key: the key of the tag
@@ -412,7 +396,7 @@ class CompoundTag(Tag):
         """
         self.put(key, IntArrayTag(value))
 
-    def get_int_array(self, key: Union[bytes, str]) -> Optional[List[int]]:
+    def get_int_array(self, key: str) -> Optional[List[int]]:
         """Get a IntArrayTag's value in this CompoundTag
         Args:
             key: the key of the tag
@@ -499,10 +483,7 @@ class CompoundTag(Tag):
         buffer = self._lib_handle.nbt_compound_to_json(self._tag_handle, indent)
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
-        try:
-            return result.decode("utf-8")
-        except UnicodeDecodeError:
-            return ""
+        return result.decode("utf-8")
 
     def to_dict(self) -> Dict[str, Any]:
         """Encode the CompoundTag to dict
@@ -512,8 +493,7 @@ class CompoundTag(Tag):
         Warning:
             dict can NOT be deserialized to NBT
         """
-        json_str = self.to_json()
-        return json.loads(json_str)
+        return json.loads(self.to_json())
 
     @staticmethod
     def from_binary_nbt(
