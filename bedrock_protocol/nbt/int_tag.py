@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 
 
@@ -20,7 +21,7 @@ class IntTag(Tag):
         Args:
             value: int value (-2147483648 ~ 2147483647)
         """
-        super().__init__()
+        self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_int_tag_create(value)
 
     def set(self, value: int) -> None:
@@ -37,5 +38,5 @@ class IntTag(Tag):
         Returns:
             int value (-2147483648 ~ 2147483647)
         """
-        
+
         return self._lib_handle.nbt_int_tag_get_value(self._tag_handle)

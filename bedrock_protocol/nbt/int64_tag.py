@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 
 
@@ -20,7 +21,7 @@ class Int64Tag(Tag):
         Args:
             value: int64 value (-9223372036854775808 ~ 9223372036854775807)
         """
-        super().__init__()
+        self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_int64_tag_create(value)
 
     def set(self, value: int) -> None:

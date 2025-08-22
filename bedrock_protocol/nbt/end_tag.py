@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 
 
@@ -13,5 +14,5 @@ class EndTag(Tag):
 
     def __init__(self):
         """Create an EndTag"""
-        super().__init__()
-        self._tag_handle=self._lib_handle.nbt_end_tag_create()
+        self._lib_handle = get_library_handle()
+        self._tag_handle = self._lib_handle.nbt_end_tag_create()

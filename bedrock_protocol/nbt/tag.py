@@ -18,13 +18,7 @@ class Tag:
     _lib_handle: ctypes.CDLL
 
     def __init__(self):
-        """
-        Warning:
-            Internal function
-            Do not construct this type
-        """
-        self._lib_handle = get_library_handle()
-        self._tag_handle = None
+        raise TypeError("Abstract class can not be instantiate!")
 
     def __eq__(self, value):
         return self.equals(value)
@@ -33,14 +27,22 @@ class Tag:
         return self.hash()
 
     def __del__(self):
-        """
+        """Free memory
         Warning:
             Internal function
-            free memory
+            Do NOT manually use this method
         """
         self._lib_handle.nbt_any_tag_destroy(self._tag_handle)
 
-    def _update_type(self):
+    @staticmethod
+    def __create_tag_by_handle(handle: ctypes.c_void_p):
+        result = Tag.__new__(Tag)
+        result._lib_handle = get_library_handle()
+        result._tag_handle = handle
+        result.__update_type()
+        return result
+
+    def __update_type(self):
         """
         Warning:
             Internal function
@@ -125,10 +127,9 @@ class Tag:
         Returns:
             Tag: the deep copy of this tag
         """
-        result = Tag()
-        result._tag_handle = self._lib_handle.nbt_any_tag_copy(self._tag_handle)
-        result._update_type()
-        return result
+        return Tag.__create_tag_by_handle(
+            self._lib_handle.nbt_any_tag_copy(self._tag_handle)
+        )
 
     def serialize(self, stream: Any) -> None:
         """Serialize a Tag into a BinaryStream in network NBT format

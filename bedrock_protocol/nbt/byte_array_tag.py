@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 from typing import Union
 import ctypes
@@ -22,7 +23,7 @@ class ByteArrayTag(Tag):
         Args:
             value: binary data
         """
-        super().__init__()
+        self._lib_handle = get_library_handle()
         if value is not None:
             length = len(value)
             if isinstance(value, bytes):

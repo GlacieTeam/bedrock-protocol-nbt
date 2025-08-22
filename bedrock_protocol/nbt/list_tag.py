@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag import Tag
 from typing import List, Optional
@@ -17,7 +18,7 @@ class ListTag(Tag):
     """
 
     def __init__(self, tag_list: List[Tag] = []):
-        super().__init__()
+        self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_list_tag_create()
         self.set_list(tag_list)
 
@@ -100,10 +101,7 @@ class ListTag(Tag):
         """
         handle = self._lib_handle.nbt_list_tag_get_tag(self._tag_handle, index)
         if handle is not None:
-            result = Tag()
-            result._tag_handle = handle
-            result._update_type()
-            return result
+            return Tag._Tag__create_tag_by_handle(handle)
         return None
 
     def clear(self) -> None:

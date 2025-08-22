@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 from bedrock_protocol.nbt.snbt_format import SnbtFormat
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
@@ -33,7 +34,7 @@ class CompoundTag(Tag):
 
     def __init__(self, tag_map: Optional[Dict[str, Tag]] = None):
         """Create a CompoundTag"""
-        super().__init__()
+        self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_compound_tag_create()
         self.set_tag_map(tag_map)
 
@@ -136,10 +137,7 @@ class CompoundTag(Tag):
             self._tag_handle, char_ptr, length
         )
         if handle is not None:
-            result = Tag()
-            result._tag_handle = handle
-            result._update_type()
-            return result
+            return Tag._Tag__create_tag_by_handle(handle)
         return None
 
     def set_tag_map(self, tag_map: Dict[str, Tag]) -> None:
@@ -512,10 +510,7 @@ class CompoundTag(Tag):
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length, little_endian
         )
         if handle is not None:
-            result = Tag()
-            result._tag_handle = handle
-            result.__class__ = CompoundTag
-            return result
+            return Tag._Tag__create_tag_by_handle(handle)
         return None
 
     @staticmethod
@@ -531,10 +526,7 @@ class CompoundTag(Tag):
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length
         )
         if handle is not None:
-            result = Tag()
-            result._tag_handle = handle
-            result.__class__ = CompoundTag
-            return result
+            return Tag._Tag__create_tag_by_handle(handle)
         return None
 
     @staticmethod
@@ -551,8 +543,5 @@ class CompoundTag(Tag):
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length
         )
         if handle is not None:
-            result = Tag()
-            result._tag_handle = handle
-            result.__class__ = CompoundTag
-            return result
+            return Tag._Tag__create_tag_by_handle(handle)
         return None

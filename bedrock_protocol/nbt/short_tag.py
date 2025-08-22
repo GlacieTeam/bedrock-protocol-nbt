@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 
 
@@ -20,7 +21,7 @@ class ShortTag(Tag):
         Args:
             value: short value (-32768 ~ 32767)
         """
-        super().__init__()
+        self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_short_tag_create(value)
 
     def set(self, value: int) -> None:

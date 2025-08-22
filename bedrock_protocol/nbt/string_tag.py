@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
 from typing import Union
 import ctypes
@@ -29,7 +30,7 @@ class StringTag(Tag):
         Args:
             value: str / bytes / bytearray (can be binary data)
         """
-        super().__init__()
+        self._lib_handle = get_library_handle()
         length = len(value)
         if isinstance(value, str):
             data = value.encode("utf-8")
