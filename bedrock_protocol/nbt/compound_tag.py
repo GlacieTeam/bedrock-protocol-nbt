@@ -160,9 +160,17 @@ class CompoundTag(Tag):
             None if failed
         """
         result = dict()
-        entries = json.loads(self.to_json()).keys()
-        for key in entries:
-            result[key] = self.get(key)
+        for index in range(self.size()):
+            keybuf = self._lib_handle.nbt_compound_tag_get_key_index(
+                self._tag_handle, index
+            )
+            keybytes = bytes(ctypes.string_at(keybuf.data, keybuf.size))
+            self._lib_handle.nbtio_buffer_destroy(ctypes.byref(keybuf))
+            key = keybytes.decode("utf-8")
+            val = Tag._Tag__create_tag_by_handle(
+                self._lib_handle.nbt_compound_tag_get_tag_index(self._tag_handle, index)
+            )
+            dict[key] = val
         return result
 
     def clear(self) -> None:
@@ -438,7 +446,7 @@ class CompoundTag(Tag):
         Returns:
             serialized bytes
         """
-        buffer = self._lib_handle.nbt_compound_to_binary_nbt(
+        buffer = self._lib_handle.nbt_compound_tag_to_binary_nbt(
             self._tag_handle, little_endian
         )
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
@@ -450,7 +458,7 @@ class CompoundTag(Tag):
         Returns:
             serialized bytes
         """
-        buffer = self._lib_handle.nbt_compound_to_network_nbt(self._tag_handle)
+        buffer = self._lib_handle.nbt_compound_tag_to_network_nbt(self._tag_handle)
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
         return result
@@ -468,7 +476,7 @@ class CompoundTag(Tag):
         length = len(content)
         char_ptr = ctypes.c_char_p(content)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
-        handle = get_library_handle().nbt_compound_from_binary_nbt(
+        handle = get_library_handle().nbt_compound_tag_from_binary_nbt(
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length, little_endian
         )
         if handle is not None:
@@ -484,7 +492,7 @@ class CompoundTag(Tag):
         length = len(content)
         char_ptr = ctypes.c_char_p(content)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
-        handle = get_library_handle().nbt_compound_from_network_nbt(
+        handle = get_library_handle().nbt_compound_tag_from_network_nbt(
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length
         )
         if handle is not None:
@@ -501,7 +509,7 @@ class CompoundTag(Tag):
         length = len(value)
         char_ptr = ctypes.c_char_p(value)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
-        handle = get_library_handle().nbt_compound_from_snbt(
+        handle = get_library_handle().nbt_compound_tag_from_snbt(
             ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length
         )
         if handle is not None:

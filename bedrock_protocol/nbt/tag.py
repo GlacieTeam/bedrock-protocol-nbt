@@ -165,7 +165,7 @@ class Tag:
         Returns:
             serialized snbt string
         """
-        buffer = self._lib_handle.nbt_compound_to_snbt(self._tag_handle, format, indent)
+        buffer = self._lib_handle.nbt_any_tag_to_snbt(self._tag_handle, format, indent)
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
         return result.decode("utf-8")
@@ -178,7 +178,7 @@ class Tag:
         Warning:
             JSON can NOT be deserialized to NBT
         """
-        buffer = self._lib_handle.nbt_compound_to_json(self._tag_handle, indent)
+        buffer = self._lib_handle.nbt_any_tag_to_json(self._tag_handle, indent)
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
         return result.decode("utf-8")

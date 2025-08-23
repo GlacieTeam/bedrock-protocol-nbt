@@ -88,6 +88,17 @@ class NativeLibrary:
         cls._lib_handle.nbt_any_tag_load.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
         cls._lib_handle.nbt_any_tag_destroy.restype = None
         cls._lib_handle.nbt_any_tag_destroy.argtypes = [ctypes.c_void_p]
+        cls._lib_handle.nbt_any_tag_to_snbt.restype = NbtIoBuffer
+        cls._lib_handle.nbt_any_tag_to_snbt.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_int,
+            ctypes.c_uint8,
+        ]
+        cls._lib_handle.nbt_any_tag_to_json.restype = NbtIoBuffer
+        cls._lib_handle.nbt_any_tag_to_json.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_uint8,
+        ]
         # EndTag
         cls._lib_handle.nbt_end_tag_create.restype = ctypes.c_void_p
         cls._lib_handle.nbt_end_tag_create.argtypes = []
@@ -225,6 +236,16 @@ class NativeLibrary:
             ctypes.c_char_p,
             ctypes.c_size_t,
         ]
+        cls._lib_handle.nbt_compound_tag_get_key_index.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_get_key_index.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+        ]
+        cls._lib_handle.nbt_compound_tag_get_tag_index.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_get_tag_index.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+        ]
         cls._lib_handle.nbt_compound_tag_has_tag.restype = ctypes.c_bool
         cls._lib_handle.nbt_compound_tag_has_tag.argtypes = [
             ctypes.c_void_p,
@@ -240,37 +261,26 @@ class NativeLibrary:
         cls._lib_handle.nbt_compound_tag_clear.restype = None
         cls._lib_handle.nbt_compound_tag_clear.argtypes = [ctypes.c_void_p]
         # Serializer
-        cls._lib_handle.nbt_compound_to_binary_nbt.restype = NbtIoBuffer
-        cls._lib_handle.nbt_compound_to_binary_nbt.argtypes = [
+        cls._lib_handle.nbt_compound_tag_to_binary_nbt.restype = NbtIoBuffer
+        cls._lib_handle.nbt_compound_tag_to_binary_nbt.argtypes = [
             ctypes.c_void_p,
             ctypes.c_bool,
         ]
-        cls._lib_handle.nbt_compound_to_network_nbt.restype = NbtIoBuffer
-        cls._lib_handle.nbt_compound_to_network_nbt.argtypes = [ctypes.c_void_p]
-        cls._lib_handle.nbt_compound_to_snbt.restype = NbtIoBuffer
-        cls._lib_handle.nbt_compound_to_snbt.argtypes = [
-            ctypes.c_void_p,
-            ctypes.c_int,
-            ctypes.c_uint8,
-        ]
-        cls._lib_handle.nbt_compound_to_json.restype = NbtIoBuffer
-        cls._lib_handle.nbt_compound_to_json.argtypes = [
-            ctypes.c_void_p,
-            ctypes.c_uint8,
-        ]
-        cls._lib_handle.nbt_compound_from_binary_nbt.restype = ctypes.c_void_p
-        cls._lib_handle.nbt_compound_from_binary_nbt.argtypes = [
+        cls._lib_handle.nbt_compound_tag_to_network_nbt.restype = NbtIoBuffer
+        cls._lib_handle.nbt_compound_tag_to_network_nbt.argtypes = [ctypes.c_void_p]
+        cls._lib_handle.nbt_compound_tag_from_binary_nbt.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_from_binary_nbt.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
             ctypes.c_bool,
         ]
-        cls._lib_handle.nbt_compound_from_network_nbt.restype = ctypes.c_void_p
-        cls._lib_handle.nbt_compound_from_network_nbt.argtypes = [
+        cls._lib_handle.nbt_compound_tag_from_network_nbt.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_from_network_nbt.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
         ]
-        cls._lib_handle.nbt_compound_from_snbt.restype = ctypes.c_void_p
-        cls._lib_handle.nbt_compound_from_snbt.argtypes = [
+        cls._lib_handle.nbt_compound_tag_from_snbt.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_from_snbt.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
         ]
