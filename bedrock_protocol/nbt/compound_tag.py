@@ -7,8 +7,6 @@
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
-from bedrock_protocol.nbt.snbt_format import SnbtFormat
-from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.byte_tag import ByteTag
 from bedrock_protocol.nbt.short_tag import ShortTag
 from bedrock_protocol.nbt.int_tag import IntTag
@@ -23,7 +21,6 @@ from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag_type import TagType
 from typing import Any, List, Optional, Union, Dict
 import ctypes
-import json
 
 
 class CompoundTag(Tag):
@@ -32,7 +29,7 @@ class CompoundTag(Tag):
     A Tag contains map of tags
     """
 
-    def __init__(self, tag_map: Optional[Dict[str, Tag]] = None):
+    def __init__(self, tag_map: Optional[Dict[str, Any]] = None):
         """Create a CompoundTag"""
         self._lib_handle = get_library_handle()
         self._tag_handle = self._lib_handle.nbt_compound_tag_create()
@@ -108,7 +105,7 @@ class CompoundTag(Tag):
             self._tag_handle, char_ptr, length
         )
 
-    def put(self, key: str, value: Tag) -> bool:
+    def put(self, key: str, val: Any) -> bool:
         """Set a tag in the CompoundTag
         Args:
             key: the key of the tag
@@ -116,6 +113,31 @@ class CompoundTag(Tag):
         Returns:
             True if succeed
         """
+        if isinstance(val, Tag):
+            value = val
+        else:
+            if isinstance(val, dict):
+                value = CompoundTag(val)
+            elif isinstance(val, list):
+                value = ListTag(val)
+            elif isinstance(val, (bool, ctypes.c_uint8)):
+                value = ByteTag(val)
+            elif isinstance(val, ctypes.c_int16):
+                value = ShortTag(val)
+            elif isinstance(val, (int, ctypes.c_int32)):
+                value = IntTag(val)
+            elif isinstance(val, (int, ctypes.c_int64)):
+                value = Int64Tag(val)
+            elif isinstance(val, (float, ctypes.c_float)):
+                value = FloatTag(val)
+            elif isinstance(val, ctypes.c_double):
+                value = DoubleTag(val)
+            elif isinstance(val, str):
+                value = StringTag(val)
+            elif isinstance(val, (bytes, bytearray)):
+                value = ByteArrayTag(val)
+            else:
+                raise TypeError("Wrong type of argument")
         index = key.encode("utf-8")
         length = len(index)
         char_ptr = ctypes.c_char_p(index)
@@ -140,7 +162,7 @@ class CompoundTag(Tag):
             return Tag._Tag__create_tag_by_handle(handle)
         return None
 
-    def set_tag_map(self, tag_map: Dict[str, Tag]) -> None:
+    def set_tag_map(self, tag_map: Dict[str, Any]) -> None:
         """Set the tag map
         Args:
             key: the key of the tag

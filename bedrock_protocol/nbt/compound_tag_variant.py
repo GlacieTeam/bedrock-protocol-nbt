@@ -48,7 +48,7 @@ class CompoundTagVariant:
             return CompoundTagVariant(self._value, result, index)
         return result
 
-    def __setitem__(self, index: Union[str, int], value: Tag) -> Any:
+    def __setitem__(self, index: Union[str, int], value: Any) -> Any:
         parent = self._parent()
         if parent is None:
             return None
@@ -67,14 +67,14 @@ class CompoundTagVariant:
     def get(self) -> Tag:
         """Get tag in this proxy class
         Returns:
-            Tag: _description_
+            the tag
         """
         return self._value
 
-    def get_value(self) -> Any:
+    def value(self) -> Any:
         """Get tag value in this proxy class
         Returns:
-            Tag: _description_
+            tag value
         """
         if self._value is not None:
             if self._value.get_type() == TagType.Compound:

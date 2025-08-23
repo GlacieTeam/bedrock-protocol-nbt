@@ -8,7 +8,8 @@
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag import Tag
-from typing import List, Optional
+from typing import Any, List, Optional
+import ctypes
 
 
 class ListTag(Tag):
@@ -60,11 +61,54 @@ class ListTag(Tag):
         """
         return self._lib_handle.nbt_list_tag_size(self._tag_handle)
 
-    def append(self, value: Tag) -> None:
+    def append(self, val: Any) -> None:
         """Append a tag to the end of the ListTag
         Args:
             value: any Tag type
         """
+        if isinstance(val, Tag):
+            value = val
+        else:
+            if isinstance(val, list):
+                value = ListTag(val)
+            elif isinstance(val, dict):
+                from bedrock_protocol.nbt.compound_tag import CompoundTag
+
+                value = CompoundTag(val)
+            elif isinstance(val, (bool, ctypes.c_uint8)):
+                from bedrock_protocol.nbt.byte_tag import ByteTag
+
+                value = ByteTag(val)
+            elif isinstance(val, ctypes.c_int16):
+                from bedrock_protocol.nbt.short_tag import ShortTag
+
+                value = ShortTag(val)
+            elif isinstance(val, (int, ctypes.c_int32)):
+                from bedrock_protocol.nbt.int_tag import IntTag
+
+                value = IntTag(val)
+            elif isinstance(val, (int, ctypes.c_int64)):
+                from bedrock_protocol.nbt.int64_tag import Int64Tag
+
+                value = Int64Tag(val)
+            elif isinstance(val, (float, ctypes.c_float)):
+                from bedrock_protocol.nbt.float_tag import FloatTag
+
+                value = FloatTag(val)
+            elif isinstance(val, ctypes.c_double):
+                from bedrock_protocol.nbt.double_tag import DoubleTag
+
+                value = DoubleTag(val)
+            elif isinstance(val, str):
+                from bedrock_protocol.nbt.string_tag import StringTag
+
+                value = StringTag(val)
+            elif isinstance(val, (bytes, bytearray)):
+                from bedrock_protocol.nbt.byte_array_tag import ByteArrayTag
+
+                value = ByteArrayTag(val)
+            else:
+                raise TypeError("Wrong type of argument")
         self._lib_handle.nbt_list_tag_add_tag(self._tag_handle, value._tag_handle)
 
     def pop(self, index: int = -1) -> bool:
@@ -80,7 +124,7 @@ class ListTag(Tag):
             )
         return self._lib_handle.nbt_list_tag_remove_tag(self._tag_handle, index)
 
-    def set(self, index: int, value: Tag) -> bool:
+    def set(self, index: int, val: Any) -> bool:
         """Set a tag in the ListTag
         Args:
             index: the index of the tag to pop (default the end)
@@ -88,6 +132,49 @@ class ListTag(Tag):
         Returns:
             True if succeed
         """
+        if isinstance(val, Tag):
+            value = val
+        else:
+            if isinstance(val, list):
+                value = ListTag(val)
+            elif isinstance(val, dict):
+                from bedrock_protocol.nbt.compound_tag import CompoundTag
+
+                value = CompoundTag(val)
+            elif isinstance(val, (bool, ctypes.c_uint8)):
+                from bedrock_protocol.nbt.byte_tag import ByteTag
+
+                value = ByteTag(val)
+            elif isinstance(val, ctypes.c_int16):
+                from bedrock_protocol.nbt.short_tag import ShortTag
+
+                value = ShortTag(val)
+            elif isinstance(val, (int, ctypes.c_int32)):
+                from bedrock_protocol.nbt.int_tag import IntTag
+
+                value = IntTag(val)
+            elif isinstance(val, (int, ctypes.c_int64)):
+                from bedrock_protocol.nbt.int64_tag import Int64Tag
+
+                value = Int64Tag(val)
+            elif isinstance(val, (float, ctypes.c_float)):
+                from bedrock_protocol.nbt.float_tag import FloatTag
+
+                value = FloatTag(val)
+            elif isinstance(val, ctypes.c_double):
+                from bedrock_protocol.nbt.double_tag import DoubleTag
+
+                value = DoubleTag(val)
+            elif isinstance(val, str):
+                from bedrock_protocol.nbt.string_tag import StringTag
+
+                value = StringTag(val)
+            elif isinstance(val, (bytes, bytearray)):
+                from bedrock_protocol.nbt.byte_array_tag import ByteArrayTag
+
+                value = ByteArrayTag(val)
+            else:
+                raise TypeError("Wrong type of argument")
         return self._lib_handle.nbt_list_tag_set_tag(
             self._tag_handle, index, value._tag_handle
         )
@@ -121,11 +208,11 @@ class ListTag(Tag):
             index += 1
         return result
 
-    def set_list(self, tag_list: List[Tag]) -> None:
+    def set_list(self, tag_list: List[Any]) -> None:
         """Set all tags in the ListTag
         Args:
             tag_list: List of tag
         """
         self.clear()
-        for tag in tag_list:
-            self.append(tag)
+        for val in tag_list:
+            self.append(val)

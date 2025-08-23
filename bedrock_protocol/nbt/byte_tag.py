@@ -7,6 +7,7 @@
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.tag import Tag
+from typing import Union
 
 
 class ByteTag(Tag):
@@ -15,7 +16,7 @@ class ByteTag(Tag):
     A Tag contains a byte (1 bytes)
     """
 
-    def __init__(self, value: int = 0):
+    def __init__(self, value: Union[int, bool] = 0):
         """Create a ByteTag
 
         Args:

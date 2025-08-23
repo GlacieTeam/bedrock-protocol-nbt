@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+import ctypes
 from bedrock_protocol.nbt import *
 from bedrock_protocol.binarystream import *
 
@@ -12,18 +13,20 @@ from bedrock_protocol.binarystream import *
 def test1():
     nbt = CompoundTag(
         {
-            "string_tag": StringTag("Test String"),
-            "byte_tag": ByteTag(114),
-            "short_tag": ShortTag(19132),
-            "int_tag": IntTag(114514),
+            "string_tag": "Test String",
+            "byte_tag": ctypes.c_ubyte(114),
+            "bool_tag": False,
+            "short_tag": ctypes.c_int16(65536),
+            "int_tag": 114514,
+            "test_list": ["237892", "homo", "114514"],
         }
     )
-    nbt["test"]["int64_tag"] = Int64Tag(1145141919810)
-    nbt["test"]["float_tag"] = FloatTag(114.514)
-    nbt["test"]["double_tag"] = DoubleTag(3.1415926535897)
-    nbt["byte_array_tag"] = ByteArrayTag(b"13276273923")
-    nbt["list_tag"] = ListTag([StringTag("aaaaa"), StringTag("bbbbb")])
-    nbt["list_tag"].append(StringTag("Homo"))
+    nbt["test"]["int64_tag"] = ctypes.c_int64(1145141919810)
+    nbt["test"]["float_tag"] = 114.514
+    nbt["test"]["double_tag"] = ctypes.c_double(3.1415926535897)
+    nbt["byte_array_tag"] = b"13276273923"
+    nbt["list_tag"] = ["aaaaa", "bbbbb"]
+    nbt["list_tag"].append("Homo")
     nbt["compound_tag"] = nbt
     nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
     print(nbt.to_snbt())
