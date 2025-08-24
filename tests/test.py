@@ -33,7 +33,7 @@ def test1():
     print(f'{nbt["test"]["double_tag"].get()}')
     print(f'{nbt["not_exist"]["not_exist"].get()}')
     print(f'{nbt["compound_tag"].get()}')
-    print(f'{nbt["list_tag"][0].get()}')
+    print(f'{nbt["list_tag"][0].value()}')
 
 
 def test2():

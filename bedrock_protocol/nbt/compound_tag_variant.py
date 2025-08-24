@@ -64,6 +64,13 @@ class CompoundTagVariant:
     def __delitem__(self, index: Union[str, int]) -> bool:
         return self.pop(index)
 
+    def get_type(self) -> TagType:
+        """
+        Returns:
+            the tag type.
+        """
+        return self.get().get_type()
+
     def get(self) -> Tag:
         """Get tag in this proxy class
         Returns:
@@ -85,6 +92,38 @@ class CompoundTagVariant:
                 return self._value.get()
         return None
 
+    def copy_tag(self) -> Tag:
+        """
+        Returns:
+            Tag: the deep copy of this tag
+        """
+        return self.get().deep_copy()
+
+    def is_object(self):
+        return self.get_type() == TagType.Compound
+
+    def is_array(self):
+        return self.get_type() == TagType.List
+
+    def is_integer(self):
+        return (
+            self.get_type() == TagType.Byte
+            or self.get_type() == TagType.Short
+            or self.get_type() == TagType.Int
+            or self.get_type() == TagType.Int64
+        )
+
+    def is_float(self):
+        return self.get_type() == TagType.Float or self.get_type() == TagType.Double
+
+    def is_binary(self):
+        return (
+            self.get_type() == TagType.ByteArray or self.get_type() == TagType.IntArray
+        )
+
+    def is_string(self):
+        return self.get_type() == TagType.String
+
     def pop(self, index: Union[str, int]) -> bool:
         parent = self._parent()
         if parent is None:
@@ -93,7 +132,11 @@ class CompoundTagVariant:
         parent.set(self._index, self._value)
         return result
 
-    def append(self, value: Tag) -> None:
+    def append(self, value: Any) -> None:
+        """Append a tag to the end of the ListTag
+        Args:
+            value: any Tag type
+        """
         parent = self._parent()
         if parent is None:
             return False
@@ -105,3 +148,20 @@ class CompoundTagVariant:
                 parent.set(self._index, self._value)
         else:
             raise TypeError("Tag is not a ListTag")
+
+    def to_snbt(self):
+        """Encode the Tag to network NBT format
+        Returns:
+            serialized snbt string
+        """
+        return self.get().to_snbt()
+
+    def to_json(self):
+        """Encode the CompoundTag to JSON
+        Returns:
+            serialized json string
+
+        Warning:
+            JSON can NOT be deserialized to NBT
+        """
+        return self.get().to_json()
