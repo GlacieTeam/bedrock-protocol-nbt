@@ -192,12 +192,34 @@ class CompoundTag(Tag):
             val = Tag._Tag__create_tag_by_handle(
                 self._lib_handle.nbt_compound_tag_get_tag_index(self._tag_handle, index)
             )
-            dict[key] = val
+            result[key] = val
         return result
 
     def clear(self) -> None:
         """Clear all tags in the CompoundTag"""
         self._lib_handle.nbt_compound_tag_clear(self._tag_handle)
+
+    def merge(self, other: "CompoundTag", merge_list: bool = False) -> None:
+        for key, val in other.get_tag_map().items():
+            if self.contains(key):
+                if (
+                    self.get(key).get_type() == TagType.Compound
+                    and val.get_type() == TagType.Compound
+                ):
+                    object: CompoundTag = self.get(key)
+                    object.merge(val, merge_list)
+                    self.put(key, object)
+                    continue
+                elif (
+                    self.get(key).get_type() == TagType.List
+                    and val.get_type() == TagType.List
+                    and merge_list
+                ):
+                    array: ListTag = self.get(key)
+                    array.merge(val)
+                    self.put(key, array)
+                    continue
+            self.put(key, val)
 
     def put_byte(self, key: str, value: int) -> None:
         """Put a ByteTag in this CompoundTag

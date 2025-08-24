@@ -7,6 +7,7 @@
 
 from bedrock_protocol.nbt._internal.native_library import get_library_handle
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
+from bedrock_protocol.nbt.tag_type import TagType
 from bedrock_protocol.nbt.tag import Tag
 from typing import Any, List, Optional
 import ctypes
@@ -60,6 +61,16 @@ class ListTag(Tag):
             size
         """
         return self._lib_handle.nbt_list_tag_size(self._tag_handle)
+
+    def get_list_type(self):
+        """Get tags type in this ListTag
+        Returns:
+            TagType
+        """
+        if self.size() == 0:
+            return TagType.End
+        else:
+            return self.get(0).get_type()
 
     def append(self, val: Any) -> None:
         """Append a tag to the end of the ListTag
@@ -216,3 +227,15 @@ class ListTag(Tag):
         self.clear()
         for val in tag_list:
             self.append(val)
+
+    def merge(self, other: "ListTag") -> None:
+        if other.size() == 0:
+            return
+        if self.get_list_type() != other.get_list_type():
+            self._lib_handle.nbt_any_tag_destroy(self._tag_handle)
+            self._tag_handle = self._lib_handle.nbt_any_tag_copy(other._tag_handle)
+        else:
+            tag_list = self.get_list()
+            for tag in other.get_list():
+                if tag not in tag_list:
+                    self.append(tag)

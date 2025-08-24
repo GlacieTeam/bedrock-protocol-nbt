@@ -97,6 +97,20 @@ def test4():
     nbt = CompoundTag()
     nbt.read(stream)
     print(f"{nbt.to_snbt()}")
+    nbt["aaa"]["bbb"] = [
+        {"a": "b", "1": "2"},
+        {"c": "d", "3": 4},
+        {"e": "f", "5": True},
+    ]
+    mergeNbt = CompoundTag(
+        {
+            "string_tag": "merge string",
+            "byte_array_tag": b"114514",
+            "aaa": {"bbb": [{"c": "d", "3": 4}, {"g": "h", "7": ShortTag(8)}]},
+        }
+    )
+    nbt.merge(mergeNbt, True)
+    print(nbt.to_snbt())
 
 
 if __name__ == "__main__":

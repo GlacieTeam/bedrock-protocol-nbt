@@ -236,7 +236,7 @@ class NativeLibrary:
             ctypes.c_char_p,
             ctypes.c_size_t,
         ]
-        cls._lib_handle.nbt_compound_tag_get_key_index.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_compound_tag_get_key_index.restype = NbtIoBuffer
         cls._lib_handle.nbt_compound_tag_get_key_index.argtypes = [
             ctypes.c_void_p,
             ctypes.c_size_t,
