@@ -17,6 +17,7 @@ from bedrock_protocol.nbt.byte_array_tag import ByteArrayTag
 from bedrock_protocol.nbt.string_tag import StringTag
 from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
+from bedrock_protocol.nbt.long_array_tag import LongArrayTag
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 from bedrock_protocol.nbt.tag_type import TagType
 from typing import Any, List, Optional, Union, Dict
@@ -84,11 +85,8 @@ class CompoundTag(Tag):
         Returns:
             True if contains
         """
-        index = key.encode("utf-8")
-        length = len(index)
-        char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_has_tag(
-            self._tag_handle, char_ptr, length
+            self._tag_handle, key.encode("utf-8")
         )
 
     def pop(self, key: str) -> bool:
@@ -98,11 +96,8 @@ class CompoundTag(Tag):
         Returns:
             True if pop succeed
         """
-        index = key.encode("utf-8")
-        length = len(index)
-        char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_remove_tag(
-            self._tag_handle, char_ptr, length
+            self._tag_handle, key.encode("utf-8")
         )
 
     def put(self, key: str, val: Any) -> bool:
@@ -138,11 +133,8 @@ class CompoundTag(Tag):
                 value = ByteArrayTag(val)
             else:
                 raise TypeError("Wrong type of argument")
-        index = key.encode("utf-8")
-        length = len(index)
-        char_ptr = ctypes.c_char_p(index)
         return self._lib_handle.nbt_compound_tag_set_tag(
-            self._tag_handle, char_ptr, length, value._tag_handle
+            self._tag_handle, key.encode("utf-8"), value._tag_handle
         )
 
     def get(self, key: str) -> Optional[Tag]:
@@ -152,11 +144,8 @@ class CompoundTag(Tag):
         Returns:
             None if failed
         """
-        index = key.encode("utf-8")
-        length = len(index)
-        char_ptr = ctypes.c_char_p(index)
         handle = self._lib_handle.nbt_compound_tag_get_tag(
-            self._tag_handle, char_ptr, length
+            self._tag_handle, key.encode("utf-8")
         )
         if handle is not None:
             return Tag._Tag__create_tag_by_handle(handle)
@@ -458,6 +447,26 @@ class CompoundTag(Tag):
             return tag.get_list()
         return None
 
+    def put_long_array(self, key: str, value: List[int]) -> None:
+        """Put a LongArrayTag in this CompoundTag
+        Args:
+            key: the key of the tag
+            value: the long array
+        """
+        self.put(key, LongArrayTag(value))
+
+    def get_long_array(self, key: str) -> Optional[List[int]]:
+        """Get a LongArrayTag's value in this CompoundTag
+        Args:
+            key: the key of the tag
+        Returns:
+            the tag long array
+        """
+        tag = self.get(key)
+        if tag is not None:
+            return tag.get_list()
+        return None
+
     def write(self, stream: Any) -> None:
         """Serialize NBT into a BinaryStream in network NBT format
         Args:
@@ -491,7 +500,21 @@ class CompoundTag(Tag):
             serialized bytes
         """
         buffer = self._lib_handle.nbt_compound_tag_to_binary_nbt(
-            self._tag_handle, little_endian
+            self._tag_handle, little_endian, False
+        )
+        result = bytes(ctypes.string_at(buffer.data, buffer.size))
+        self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
+        return result
+
+    def to_binary_nbt_with_header(self, little_endian: bool = True) -> bytes:
+        """Encode the CompoundTag to binary NBT with header format
+        Args:
+            little_endian: whether use little-endian bytes order
+        Returns:
+            serialized bytes
+        """
+        buffer = self._lib_handle.nbt_compound_tag_to_binary_nbt(
+            self._tag_handle, little_endian, True
         )
         result = bytes(ctypes.string_at(buffer.data, buffer.size))
         self._lib_handle.nbtio_buffer_destroy(ctypes.byref(buffer))
@@ -521,7 +544,33 @@ class CompoundTag(Tag):
         char_ptr = ctypes.c_char_p(content)
         buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
         handle = get_library_handle().nbt_compound_tag_from_binary_nbt(
-            ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)), length, little_endian
+            ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)),
+            length,
+            little_endian,
+            False,
+        )
+        if handle is not None:
+            return Tag._Tag__create_tag_by_handle(handle)
+        return None
+
+    @staticmethod
+    def from_binary_nbt_with_header(
+        content: bytes, little_endian: bool = True
+    ) -> Optional["CompoundTag"]:
+        """Parse binary NBT with header
+        Args:
+            little_endian: whether use little-endian bytes order
+        Returns:
+            CompoundTag
+        """
+        length = len(content)
+        char_ptr = ctypes.c_char_p(content)
+        buf = ctypes.cast(char_ptr, ctypes.POINTER(ctypes.c_uint8 * length))
+        handle = get_library_handle().nbt_compound_tag_from_binary_nbt(
+            ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)),
+            length,
+            little_endian,
+            True,
         )
         if handle is not None:
             return Tag._Tag__create_tag_by_handle(handle)

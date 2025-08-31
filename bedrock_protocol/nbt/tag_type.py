@@ -21,3 +21,4 @@ class TagType(IntEnum):
     List = 9
     Compound = 10
     IntArray = 11
+    LongArray = 12

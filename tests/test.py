@@ -29,6 +29,7 @@ def test1():
     nbt["list_tag"].append("Homo")
     nbt["compound_tag"] = nbt
     nbt["int_array_tag"] = IntArrayTag([1, 2, 3, 4, 5, 6, 7])
+    nbt["long_array_tag"] = LongArrayTag([1, 2, 3, 4, 5, 6, 7])
     print(nbt.to_snbt())
     print(f'{nbt["test"]["double_tag"].get()}')
     print(f'{nbt["not_exist"]["not_exist"].get()}')
@@ -37,7 +38,7 @@ def test1():
 
 
 def test2():
-    snbt = '{"byte_array_tag": [B;49b, 51b, 50b, 55b, 54b, 50b, 55b, 51b, 57b, 50b, 51b],"double_tag": 3.141593,"byte_tag": 114b}'
+    snbt = '{"byte_array_tag": [B;49b, 51b, 50b, 55b, 54b, 50b, 55b, 51b, 57b, 50b, 51b],"double_tag": 3.141593,"byte_tag": 114b,    long_array_tag: [L;1l, 2l, 3l, 4l, 5l, 6l, 7l]}'
     nbt = CompoundTag.from_snbt(snbt)
     # print(nbt.to_json())
     bnbt = nbt.to_binary_nbt()

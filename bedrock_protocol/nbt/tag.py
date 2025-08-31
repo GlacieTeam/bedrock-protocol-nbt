@@ -103,6 +103,11 @@ class Tag:
 
             self.__class__ = IntArrayTag
 
+        elif tag_type == TagType.LongArray:
+            from bedrock_protocol.nbt.long_array_tag import LongArrayTag
+
+            self.__class__ = LongArrayTag
+
     def get_type(self) -> TagType:
         """
         Returns:

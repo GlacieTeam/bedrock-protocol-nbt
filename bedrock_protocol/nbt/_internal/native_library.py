@@ -227,14 +227,12 @@ class NativeLibrary:
         cls._lib_handle.nbt_compound_tag_set_tag.argtypes = [
             ctypes.c_void_p,
             ctypes.c_char_p,
-            ctypes.c_size_t,
             ctypes.c_void_p,
         ]
         cls._lib_handle.nbt_compound_tag_get_tag.restype = ctypes.c_void_p
         cls._lib_handle.nbt_compound_tag_get_tag.argtypes = [
             ctypes.c_void_p,
             ctypes.c_char_p,
-            ctypes.c_size_t,
         ]
         cls._lib_handle.nbt_compound_tag_get_key_index.restype = NbtIoBuffer
         cls._lib_handle.nbt_compound_tag_get_key_index.argtypes = [
@@ -250,13 +248,11 @@ class NativeLibrary:
         cls._lib_handle.nbt_compound_tag_has_tag.argtypes = [
             ctypes.c_void_p,
             ctypes.c_char_p,
-            ctypes.c_size_t,
         ]
         cls._lib_handle.nbt_compound_tag_remove_tag.restype = ctypes.c_bool
         cls._lib_handle.nbt_compound_tag_remove_tag.argtypes = [
             ctypes.c_void_p,
             ctypes.c_char_p,
-            ctypes.c_size_t,
         ]
         cls._lib_handle.nbt_compound_tag_clear.restype = None
         cls._lib_handle.nbt_compound_tag_clear.argtypes = [ctypes.c_void_p]
@@ -265,6 +261,7 @@ class NativeLibrary:
         cls._lib_handle.nbt_compound_tag_to_binary_nbt.argtypes = [
             ctypes.c_void_p,
             ctypes.c_bool,
+            ctypes.c_bool,
         ]
         cls._lib_handle.nbt_compound_tag_to_network_nbt.restype = NbtIoBuffer
         cls._lib_handle.nbt_compound_tag_to_network_nbt.argtypes = [ctypes.c_void_p]
@@ -272,6 +269,7 @@ class NativeLibrary:
         cls._lib_handle.nbt_compound_tag_from_binary_nbt.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
+            ctypes.c_bool,
             ctypes.c_bool,
         ]
         cls._lib_handle.nbt_compound_tag_from_network_nbt.restype = ctypes.c_void_p
@@ -310,7 +308,35 @@ class NativeLibrary:
         cls._lib_handle.nbt_int_array_tag_set_value.argtypes = [
             ctypes.c_void_p,
             ctypes.c_size_t,
+            ctypes.c_int32,
+        ]
+        # LongArrayTag
+        cls._lib_handle.nbt_long_array_tag_create.restype = ctypes.c_void_p
+        cls._lib_handle.nbt_long_array_tag_create.argtypes = []
+        cls._lib_handle.nbt_long_array_tag_size.restype = ctypes.c_size_t
+        cls._lib_handle.nbt_long_array_tag_size.argtypes = [ctypes.c_void_p]
+        cls._lib_handle.nbt_long_array_tag_add_value.restype = None
+        cls._lib_handle.nbt_long_array_tag_add_value.argtypes = [
             ctypes.c_void_p,
+            ctypes.c_int64,
+        ]
+        cls._lib_handle.nbt_long_array_tag_get_value.restype = ctypes.c_int64
+        cls._lib_handle.nbt_long_array_tag_get_value.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+        ]
+        cls._lib_handle.nbt_long_array_tag_remove_value.restype = ctypes.c_bool
+        cls._lib_handle.nbt_long_array_tag_remove_value.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+        ]
+        cls._lib_handle.nbt_long_array_tag_clear.restype = None
+        cls._lib_handle.nbt_long_array_tag_clear.argtypes = [ctypes.c_void_p]
+        cls._lib_handle.nbt_long_array_tag_set_value.restype = ctypes.c_bool
+        cls._lib_handle.nbt_long_array_tag_set_value.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+            ctypes.c_int64,
         ]
 
     @classmethod

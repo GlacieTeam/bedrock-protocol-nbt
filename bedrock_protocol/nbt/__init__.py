@@ -19,6 +19,7 @@ from bedrock_protocol.nbt.string_tag import StringTag
 from bedrock_protocol.nbt.list_tag import ListTag
 from bedrock_protocol.nbt.compound_tag import CompoundTag
 from bedrock_protocol.nbt.int_array_tag import IntArrayTag
+from bedrock_protocol.nbt.long_array_tag import LongArrayTag
 from bedrock_protocol.nbt.compound_tag_variant import CompoundTagVariant
 
 __all__ = [
@@ -36,5 +37,6 @@ __all__ = [
     "ListTag",
     "CompoundTag",
     "IntArrayTag",
+    "LongArrayTag",
     "CompoundTagVariant",
 ]
